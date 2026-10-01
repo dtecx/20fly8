@@ -177,6 +177,17 @@ src/ui/                 the figure's panels and the whole-brain inset
 scripts/*.ts            headless training, controls, screenshots
 ```
 
+## Related
+
+- [Doodle Fly](https://github.com/dtecx/doodle-fly): the same FlyWire brain, whole and spiking, steering a jumping game
+  with nothing learned.
+- [flybrain2048](https://github.com/rtfeng101/2048-fruit-fly) by rtfeng101 also teaches a fly circuit 2048, a different
+  way: a 4,632-neuron MaleCNS sub-circuit run as a recurrent rate network, with synapse strengths, sensory mapping and
+  readout trained by PPO.
+- [The Fly's Table](https://github.com/WilliamJones/fly-blackjack) by WilliamJones: blackjack learned by a MaleCNS
+  mushroom-body model with a dopamine-gated rule, the closest relative of this project's learning.
+- [Awesome Fly](https://github.com/cobanov/awesome-fly): many more projects built on fly connectomes.
+
 ## Credits & licenses
 
 - **Connectome:** Dorkenwald, S. *et al.* Neuronal wiring diagram of an adult brain. *Nature* 634, 124–138 (2024);
