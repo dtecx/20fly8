@@ -244,13 +244,18 @@ export class MushroomBody {
     return changed;
   }
 
-  /** MBON drive for a coded smell (for display): Σ active KC synapses × gain */
-  mbonDrive(code: KcCode, out: Float32Array): void {
+  /** MBON drive for a coded smell (for display): Σ active KC synapses × gain, and the same at connectome strength */
+  mbonDrive(code: KcCode, out: Float32Array, naive: Float32Array): void {
     out.fill(0);
+    naive.fill(0);
     const km = this.c.kcMbon;
     for (let i = 0; i < code.n; i++) {
       const k = code.k[i];
-      for (let e = km.ptr[k]; e < km.ptr[k + 1]; e++) out[km.tgt[e]] += km.syn[e] * this.gain[e] * code.a[i];
+      for (let e = km.ptr[k]; e < km.ptr[k + 1]; e++) {
+        const d = km.syn[e] * code.a[i];
+        out[km.tgt[e]] += d * this.gain[e];
+        naive[km.tgt[e]] += d;
+      }
     }
   }
 

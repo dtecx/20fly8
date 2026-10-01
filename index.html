@@ -3,106 +3,126 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>20fly8 — a fruit-fly brain learns 2048</title>
+    <title>20fly8 — a fly's mushroom body learns 2048</title>
     <meta
       name="description"
-      content="2048 played by the mushroom body of a fruit fly, the brain's learning centre, wired from the FlyWire v783 connectome. Dopamine teaches it, live in your browser."
+      content="2048 played by the mushroom body of a fruit fly, wired from the FlyWire v783 connectome and taught by dopamine, live in your browser."
     />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23edc53f' stroke='%232a1c0f' stroke-width='4'/%3E%3Cellipse cx='28' cy='36' rx='12' ry='9' fill='%23d9a54c' stroke='%232a1c0f' stroke-width='3'/%3E%3Ccircle cx='41' cy='31' r='8' fill='%23d8322a' stroke='%232a1c0f' stroke-width='3'/%3E%3Cellipse cx='24' cy='24' rx='11' ry='5' fill='%23eaf6ff' stroke='%233f5c78' stroke-width='2' transform='rotate(-20 24 24)'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#f3eee4" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='9' fill='%231c1a17'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='26' font-style='italic' text-anchor='middle' fill='%23f0cf72'%3Ef8%3C/text%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&family=Pangolin&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <main id="app">
-      <section id="game-pane" aria-label="Game">
-        <canvas id="game"></canvas>
-        <button id="mute-btn" class="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
-          <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
-            <path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
-          </svg>
-          <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
-            <path class="wave" d="M16 9.5l5 5M21 9.5l-5 5" />
-          </svg>
-        </button>
-        <div id="sound-hint" hidden>click anywhere for sound</div>
-      </section>
-
-      <section id="right">
-        <div id="arcade-pane">
-          <canvas id="arcade" aria-label="3D fly at an arcade cabinet"></canvas>
-          <div class="tag">
-            <b>3D</b> the fly presses the arrow its mushroom body likes best
-            <span class="hint">drag to orbit</span>
-          </div>
+    <div id="app">
+      <header class="masthead">
+        <div class="brand">
+          <h1>20fly8</h1>
+          <p class="dek">A fruit fly’s mushroom body learns to play 2048</p>
         </div>
-
-        <div id="stats">
-          <header>
-            <div class="title">
-              <b>MUSHROOM BODY</b>
-              <span id="dataset">—</span>
-            </div>
-            <div class="toggles">
-              <button id="speed-btn" title="Speed (F): watch every move, or let the fly play thousands of games">×1</button>
-              <button id="pause-btn" title="Pause (space)">❚❚ pause</button>
-              <button data-opt="noDopamine" title="Control: block the dopamine neurons, so no synapse can change (D)">no dopamine</button>
-              <button id="shuffle-btn" title="Control: rewire the nose, so every smell reaches different projection neurons (S)">shuffle smells</button>
-              <button id="reset-btn" title="Forget everything: all synapses back to their connectome strength">new fly</button>
-            </div>
-          </header>
-
-          <div class="grid">
-            <div class="card mb">
-              <canvas id="mbmap"></canvas>
-              <div class="card-title">mushroom body · live</div>
-            </div>
-
-            <div class="card smells">
-              <div class="card-title">
-                four smells → one move
-                <span id="choice-value">—</span>
-              </div>
-              <div id="smells"></div>
-            </div>
-
-            <div class="card raster">
-              <div class="card-title">Kenyon cells per move <span id="kc-sparse">—</span></div>
-              <canvas id="raster"></canvas>
-            </div>
-
-            <div class="card traces">
-              <canvas id="traces"></canvas>
-            </div>
-
-            <div class="card nums">
-              <div class="num"><span>games played</span><b id="n-games">0</b></div>
-              <div class="num"><span>moves made</span><b id="n-moves">0</b></div>
-              <div class="num"><span>mean score · last 100</span><b id="n-mean">—</b></div>
-              <div class="num"><span>best tile ever</span><b id="n-best">—</b></div>
-              <div class="num"><span>synapses changed</span><b id="n-plastic">0</b></div>
-              <div class="num"><span>moves / s</span><b id="n-speed">—</b></div>
-              <div class="num wide"><span>reached in the last 100 games</span><b id="n-reach">—</b></div>
-            </div>
-
-            <div class="card brain">
-              <canvas id="brainmap"></canvas>
-              <div class="card-title">whole brain · mushroom body lit</div>
-            </div>
+        <nav class="controls" aria-label="Controls">
+          <button id="play" class="icon-btn" type="button" aria-label="Pause" title="Pause (space)">
+            <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx="1" /><rect x="9.5" y="2.5" width="3" height="11" rx="1" /></svg>
+            <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z" /></svg>
+          </button>
+          <div class="seg" role="radiogroup" aria-label="Speed" title="Speed (F)">
+            <button type="button" role="radio" data-speed="0">1×</button>
+            <button type="button" role="radio" data-speed="1">4×</button>
+            <button type="button" role="radio" data-speed="2">16×</button>
+            <button type="button" role="radio" data-speed="3">Turbo</button>
           </div>
-        </div>
-      </section>
-    </main>
+          <span class="divider" aria-hidden="true"></span>
+          <button id="exp-dopamine" class="text-btn" type="button" aria-pressed="false" title="Silence the dopamine neurons: nothing can be learned (D)">Block dopamine</button>
+          <button id="exp-rewire" class="text-btn" type="button" title="Connect every smell to different projection neurons: what was learned no longer applies (R)">Rewire the nose</button>
+          <button id="exp-reset" class="text-btn" type="button" title="Start over with a naive fly">New fly</button>
+          <button id="about-btn" class="text-btn quiet" type="button">How it works</button>
+        </nav>
+      </header>
+
+      <main class="figure">
+        <section class="panel game" aria-label="The game">
+          <div class="game-head">
+            <div class="stat big"><span>Score</span><b id="score">0</b></div>
+            <div class="stat"><span>Game</span><b id="game-n">1</b></div>
+            <div class="stat"><span>Largest tile</span><b id="max-tile">—</b></div>
+            <div class="stat"><span>Best score</span><b id="best">0</b></div>
+          </div>
+          <div class="board-wrap"><canvas id="board"></canvas></div>
+          <p class="caption" id="move-caption">&nbsp;</p>
+          <p class="explainer">
+            Nobody tells this fly the rules. Its moves come from the <em>mushroom body</em>, the part of the brain flies
+            learn smells with, wired cell by cell from the FlyWire connectome. Merging tiles is its sugar; when a move turns
+            out better or worse than expected, dopamine adjusts the synapses that judged it. Press <b>Turbo</b> to let it
+            play a few hundred games and watch panel&nbsp;d.
+          </p>
+        </section>
+
+        <section class="panel futures" aria-labelledby="h-futures">
+          <h2 id="h-futures"><span class="fig">b</span>Four possible boards, one choice</h2>
+          <p class="sub">Before each move the fly smells the board every arrow would make and goes for the one its mushroom body likes most.</p>
+          <canvas id="futures"></canvas>
+        </section>
+
+        <section class="panel circuit" aria-labelledby="h-circuit">
+          <h2 id="h-circuit"><span class="fig">c</span>Inside the mushroom body</h2>
+          <canvas id="circuit"></canvas>
+          <p class="narration" id="narration">&nbsp;</p>
+        </section>
+
+        <section class="panel brain" aria-label="Where the mushroom bodies are">
+          <canvas id="brain"></canvas>
+          <p class="caption small" id="brain-caption">The mushroom bodies (gold) among all 138,639 neurons of the FlyWire brain.</p>
+        </section>
+
+        <section class="panel learning" aria-labelledby="h-learning">
+          <h2 id="h-learning"><span class="fig">d</span>Learning</h2>
+          <canvas id="curve"></canvas>
+          <p class="facts" id="facts">&nbsp;</p>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="about">
+      <form method="dialog"><button class="close" aria-label="Close">×</button></form>
+      <h2>How it works</h2>
+      <p>
+        Flies learn which smells mean food in their <em>mushroom bodies</em>. A smell switches on a few of the ~50 kinds of
+        projection neurons; each Kenyon cell listens to a handful of them and fires only when enough agree, so every
+        smell gets its own sparse pattern of Kenyon cells. Those cells talk to a few dozen output neurons that push the fly
+        towards a smell or away from it. Dopamine neurons decide which of those synapses to weaken.
+      </p>
+      <p>
+        Here the smell is a 2048 board. Each cell and tile size has its own projection neuron, and the wiring from
+        there on is the real FlyWire v783 connectome: 27,502 connections onto 5,177 Kenyon cells, 62,261 onto 96 output
+        neurons. Before every move the fly smells the four boards it could make and picks the one it likes most. When
+        the move pays off better than that smell promised, the reward neurons (PAM) fire and weaken the synapses onto
+        avoidance neurons; when it goes worse, the punishment neurons (PPL1) weaken the synapses onto approach neurons.
+        Merging tiles is the sugar. That is all it learns from.
+      </p>
+      <table>
+        <thead><tr><th>Part</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Who connects to whom, synapse counts</td><td>FlyWire v783, unchanged</td></tr>
+          <tr><td>Which compartment gets reward or punishment dopamine</td><td>read from the DAN → output-neuron synapses</td></tr>
+          <tr><td>Dopamine weakens the synapses of active Kenyon cells</td><td>measured in flies (Hige et al. 2015); bidirectional here</td></tr>
+          <tr><td>Board → projection neurons, the reward-prediction error, picking a move</td><td>hand-made interfaces</td></tr>
+          <tr><td>Neuron dynamics</td><td>firing-rate model with APL-style sparse coding, not spikes</td></tr>
+        </tbody>
+      </table>
+      <p class="small">
+        Connectome: Dorkenwald et al. 2024, Schlegel et al. 2024 (CC BY-NC 4.0). Mushroom-body compartments: Aso et al.
+        2014; Li et al. 2020. Code: MIT.
+      </p>
+    </dialog>
 
     <div id="loader">
       <div class="box">
-        <div class="l-title">Waking up a fly</div>
-        <div class="l-sub">FlyWire v783 · 5,177 Kenyon cells · 62,261 plastic synapses · ~2.5 MB</div>
+        <div class="l-title">20fly8</div>
+        <div class="l-sub">Wiring a mushroom body from the FlyWire connectome</div>
         <div class="l-track"><div id="loader-bar"></div></div>
         <div id="loader-stage">…</div>
       </div>

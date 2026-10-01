@@ -7,10 +7,12 @@ export interface ReadyInfo {
   neurons: number;
   connections: number;
   synapses: number;
-  pn: { n: number; type: string[]; side: Uint8Array };
-  kc: { n: number; type: string[]; side: Uint8Array; lobe: Uint8Array };
-  mbon: { n: number; type: string[]; side: Uint8Array; cluster: Int8Array; dan: string[] };
-  dan: { n: number; type: string[]; side: Uint8Array; cluster: Int8Array };
+  /** `id` is each neuron's index among the 138,639 of the whole brain */
+  pn: { n: number; id: Int32Array; type: string[]; side: Uint8Array };
+  kc: { n: number; id: Int32Array; type: string[]; side: Uint8Array; lobe: Uint8Array };
+  mbon: { n: number; id: Int32Array; type: string[]; side: Uint8Array; cluster: Int8Array; dan: string[] };
+  dan: { n: number; id: Int32Array; type: string[]; side: Uint8Array; cluster: Int8Array };
+  brain: { file: string; scale: number; superclasses: string[] };
   /** PN -> KC and KC -> MBON connection and synapse counts */
   pnKcConnections: number;
   pnKcSynapses: number;
@@ -28,6 +30,8 @@ export interface ReadyInfo {
 
 export interface OptionView {
   legal: boolean;
+  /** the board this move would make, before the new tile */
+  after: Uint8Array;
   sugar: number;
   points: number;
   valence: number;
@@ -54,6 +58,8 @@ export interface StepFrame {
   pns: Int32Array;
   /** drive of every MBON for the chosen board */
   mbon: Float32Array;
+  /** the same drive if every synapse still had its connectome strength */
+  mbonNaive: Float32Array;
   sugar: number;
   points: number;
   dopamine: number;
@@ -64,7 +70,7 @@ export interface StepFrame {
   gameOver: boolean;
   record: GameRecord | null;
   totalMoves: number;
-  /** synapses whose strength differs from the connectome's */
+  /** synapses more than 10 % stronger or weaker than in the connectome */
   plastic: number;
   wallMs: number;
 }

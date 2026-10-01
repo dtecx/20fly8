@@ -23,6 +23,7 @@ let turbo = false;
 let turboTimer: ReturnType<typeof setTimeout> | null = null;
 let reported = 0;
 const mbonDrive = new Float32Array(256);
+const mbonNaive = new Float32Array(256);
 
 async function fetchJson(url: string): Promise<unknown> {
   const res = await fetch(url);
@@ -41,10 +42,11 @@ async function fetchJson(url: string): Promise<unknown> {
   return JSON.parse(await new Blob(chunks as BlobPart[]).text());
 }
 
+/** synapses more than 10 % away from their connectome strength */
 function countPlastic(): number {
   let n = 0;
   const g = mb.gain;
-  for (let e = 0; e < g.length; e++) if (g[e] !== 1) n++;
+  for (let e = 0; e < g.length; e++) if (g[e] > 1.1 || g[e] < 0.9) n++;
   return n;
 }
 
@@ -78,10 +80,11 @@ async function init(msg: Extract<ToWorker, { type: "init" }>): Promise<void> {
       neurons: circuit.meta.neurons,
       connections: circuit.meta.connections,
       synapses: circuit.meta.synapses,
-      pn: { n: circuit.pn.n, type: circuit.pn.type, side: circuit.pn.side },
-      kc: { n: circuit.kc.n, type: circuit.kc.type, side: circuit.kc.side, lobe: circuit.kc.lobe },
-      mbon: { n: circuit.mbon.n, type: circuit.mbon.type, side: circuit.mbon.side, cluster: circuit.mbon.cluster, dan: circuit.mbon.dan },
-      dan: { n: circuit.dan.n, type: circuit.dan.type, side: circuit.dan.side, cluster: circuit.dan.cluster },
+      pn: { n: circuit.pn.n, id: circuit.pn.id, type: circuit.pn.type, side: circuit.pn.side },
+      kc: { n: circuit.kc.n, id: circuit.kc.id, type: circuit.kc.type, side: circuit.kc.side, lobe: circuit.kc.lobe },
+      mbon: { n: circuit.mbon.n, id: circuit.mbon.id, type: circuit.mbon.type, side: circuit.mbon.side, cluster: circuit.mbon.cluster, dan: circuit.mbon.dan },
+      dan: { n: circuit.dan.n, id: circuit.dan.id, type: circuit.dan.type, side: circuit.dan.side, cluster: circuit.dan.cluster },
+      brain: { file: circuit.brain.file, scale: circuit.brain.scale, superclasses: circuit.brain.superclasses },
       pnKcConnections: circuit.pnKc.tgt.length,
       pnKcSynapses: sum(circuit.pnKc.syn),
       kcMbonConnections: circuit.kcMbon.tgt.length,
@@ -115,6 +118,7 @@ function view(o: FlyAgent["options"][number]): OptionView {
   const norm = o.code.z > 0 ? mb.p.synScale / Math.sqrt(o.code.z) : 0;
   return {
     legal: o.legal,
+    after: o.after.slice(),
     sugar: o.sugar,
     points: o.points,
     valence: o.valence,
@@ -138,7 +142,7 @@ function step(id: number): void {
   // the options were evaluated on the board before the move: report them as the fly saw them
   const options = agent.options.map(view);
   const chosen = agent.options[r.move].code;
-  mb.mbonDrive(chosen, mbonDrive);
+  mb.mbonDrive(chosen, mbonDrive, mbonNaive);
   const kcs = chosen.k.slice(0, chosen.n);
   const pns = mb.pnsOf(agent.options[r.move].after);
   const record = r.gameOver ? agent.history[agent.history.length - 1] : null;
@@ -153,6 +157,7 @@ function step(id: number): void {
     kcs,
     pns,
     mbon: mbonDrive.slice(0, circuit.mbon.n),
+    mbonNaive: mbonNaive.slice(0, circuit.mbon.n),
     sugar: r.sugar,
     points: r.points,
     dopamine: r.dopamine,
@@ -166,7 +171,7 @@ function step(id: number): void {
     plastic: countPlastic(),
     wallMs: performance.now() - t0,
   };
-  post({ type: "step", frame }, [frame.kcs.buffer, frame.pns.buffer, frame.mbon.buffer]);
+  post({ type: "step", frame }, [frame.kcs.buffer, frame.pns.buffer, frame.mbon.buffer, frame.mbonNaive.buffer]);
 }
 
 function turboSlice(): void {
