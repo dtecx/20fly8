@@ -1,0 +1,41 @@
+{
+  "name": "20fly8",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A fruit fly's mushroom body (FlyWire v783 connectome) learns to play 2048 with dopamine, live in the browser.",
+  "license": "MIT",
+  "author": "dtecx",
+  "keywords": [
+    "connectome",
+    "flywire",
+    "drosophila",
+    "fruit-fly",
+    "mushroom-body",
+    "dopamine",
+    "reinforcement-learning",
+    "temporal-difference",
+    "2048",
+    "threejs",
+    "game"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "data": "uv run scripts/build_data.py"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}
