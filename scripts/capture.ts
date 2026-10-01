@@ -3,6 +3,7 @@
 //   node scripts/capture.ts [--url http://localhost:2048/] [--wait 20] [--gif 8] [--gif-width 800] [--gif-fps 10]
 //                           [--width 1920 --height 1080] [--out docs/screenshot.png] [--eval "js run after loading"]
 //                           [--turbo 60]   (let the fly learn in turbo for 60 s first, then watch it at 1x)
+//                           [--phone]      (a 390 x 844 phone at 3x; the screenshot covers the whole page)
 // Needs Google Chrome; the GIF needs ffmpeg. Writes docs/screenshot.png and docs/demo.gif.
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -17,8 +18,9 @@ const CHROME = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/M
 const url = arg("url", "http://localhost:2048/");
 const waitS = Number(arg("wait", "20"));
 const gifS = Number(arg("gif", "8"));
-const width = Number(arg("width", "1920"));
-const height = Number(arg("height", "1080"));
+const phone = process.argv.includes("--phone");
+const width = Number(arg("width", phone ? "390" : "1920"));
+const height = Number(arg("height", phone ? "844" : "1080"));
 const gifWidth = Number(arg("gif-width", "800"));
 const gifFps = Number(arg("gif-fps", "10"));
 const port = 9333;
@@ -82,7 +84,7 @@ async function main(): Promise<void> {
     });
   const evaluate = async (expr: string) => (await send("Runtime.evaluate", { expression: expr, returnByValue: true })).result?.value;
 
-  await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+  await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: phone ? 3 : 1, mobile: phone });
   await send("Page.enable");
   await send("Page.navigate", { url });
   console.log(`loading ${url} ...`);
@@ -101,7 +103,11 @@ async function main(): Promise<void> {
   }
   console.log(`playing for ${waitS} s ...`);
   await sleep(waitS * 1000);
-  const shot = await send("Page.captureScreenshot", { format: "png" });
+  const full = phone ? (await send("Page.getLayoutMetrics")).cssContentSize : null;
+  const shot = await send(
+    "Page.captureScreenshot",
+    full ? { format: "png", captureBeyondViewport: true, clip: { x: 0, y: 0, width: full.width, height: full.height, scale: 1 } } : { format: "png" },
+  );
   writeFileSync(shotPath, Buffer.from(shot.data, "base64"));
   console.log(`wrote ${shotPath}`);
 

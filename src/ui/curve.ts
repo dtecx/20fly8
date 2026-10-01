@@ -50,9 +50,11 @@ export class CurveView {
     this.dirty = false;
     const { ctx, w, h } = this;
     ctx.clearRect(0, 0, w, h);
+    // on a phone the legend gets its own line
+    const narrow = w < 640;
     const left = 46;
     const right = 14;
-    const top = 22;
+    const top = narrow ? 46 : 22;
     const bottom = 24;
     const pw = w - left - right;
     const ph = h - top - bottom;
@@ -101,6 +103,7 @@ export class CurveView {
 
     // legend
     ctx.font = `400 12px ${F.sans}`;
+    const ly = narrow ? 32 : 12;
     let lx = left + pw;
     for (const [e, label] of [
       [11, "2048"],
@@ -111,16 +114,16 @@ export class CurveView {
       const tw = ctx.measureText(label).width;
       ctx.fillStyle = C.ink2;
       ctx.textAlign = "right";
-      ctx.fillText(label, lx, 12);
+      ctx.fillText(label, lx, ly);
       ctx.fillStyle = dotColor(e);
       ctx.beginPath();
-      ctx.arc(lx - tw - 8, 8, 4, 0, Math.PI * 2);
+      ctx.arc(lx - tw - 8, ly - 4, 4, 0, Math.PI * 2);
       ctx.fill();
       lx -= tw + 26;
     }
     ctx.fillStyle = C.ink3;
     ctx.textAlign = "right";
-    ctx.fillText("largest tile:", lx, 12);
+    ctx.fillText("largest tile:", lx, ly);
 
     if (n === 0) {
       ctx.textAlign = "center";

@@ -25,10 +25,11 @@ export class FuturesView {
   }
 
   resize(): void {
-    const parentW = this.canvas.parentElement!.clientWidth;
+    const parentW = this.canvas.getBoundingClientRect().width || this.canvas.parentElement!.clientWidth;
     this.cols = parentW >= 760 ? 4 : 2;
-    // four in a row: the stylesheet sets the height; two by two needs twice as much
-    this.canvas.style.height = this.cols === 4 ? "" : "330px";
+    // four in a row: the stylesheet sets the height; two by two: as tall as two rows of boards
+    const s = Math.min((parentW / 2) * 0.42, 150);
+    this.canvas.style.height = this.cols === 4 ? "" : `${Math.round(2 * (s + 40))}px`;
     const { w, h, ctx } = fitCanvas(this.canvas);
     this.ctx = ctx;
     this.w = w;
@@ -113,7 +114,8 @@ export class FuturesView {
       ty += 21;
       ctx.font = `400 12px ${F.sans}`;
       ctx.fillStyle = o.sugar ? C.reward : C.ink3;
-      ctx.fillText(o.sugar ? `+${o.sugar} merge${o.sugar > 1 ? "s" : ""} (sugar)` : "no merge", tx, ty);
+      const roomy = x0 + cw - tx > 120;
+      ctx.fillText(o.sugar ? `+${o.sugar} merge${o.sugar > 1 ? "s" : ""}${roomy ? " (sugar)" : ""}` : "no merge", tx, ty);
       ty += 22;
       // preference among the moves that are possible
       const bw = Math.max(30, Math.min(cw - s - 34, 120));
