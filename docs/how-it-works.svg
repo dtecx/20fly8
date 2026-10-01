@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 236" width="900" height="236" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <style>
+    .label { fill: #768390; font-size: 15px; font-weight: 600; }
+    .note { fill: #768390; font-size: 12.5px; }
+    .line { stroke: #768390; stroke-width: 1.5; fill: none; }
+    .dot { fill: #768390; }
+    .ring { fill: none; stroke: #768390; stroke-width: 1.5; }
+    .learn { stroke: #e0a03a; stroke-width: 3; fill: none; }
+    .learn-text { fill: #e0a03a; font-size: 12.5px; font-weight: 600; }
+    .reward { fill: #3fa66e; font-size: 12.5px; font-weight: 600; }
+    .punish { fill: #e5534b; font-size: 12.5px; font-weight: 600; }
+  </style>
+
+  <!-- stations: hollow = hand-made interface, filled = real neurons and synapses -->
+  <path class="line" d="M69 70 H241 M259 70 H441 M659 70 H831"/>
+  <path class="learn" d="M459 70 H641"/>
+  <path class="line" d="M150 65 l6 5 l-6 5 M345 65 l6 5 l-6 5 M740 65 l6 5 l-6 5"/>
+  <circle class="ring" cx="60" cy="70" r="7"/>
+  <circle class="ring" cx="250" cy="70" r="7"/>
+  <circle class="dot" cx="450" cy="70" r="8"/>
+  <circle class="dot" cx="650" cy="70" r="8"/>
+  <circle class="ring" cx="840" cy="70" r="7"/>
+
+  <g text-anchor="middle">
+    <text class="label" x="60" y="44">next boards</text>
+    <text class="label" x="250" y="44">nose</text>
+    <text class="label" x="450" y="44">Kenyon cells</text>
+    <text class="label" x="650" y="44">output neurons</text>
+    <text class="label" x="840" y="44">move</text>
+
+    <text class="note" x="60" y="100">one per arrow</text>
+    <text class="note" x="250" y="100">32 of 267 projection</text>
+    <text class="note" x="250" y="117">neurons per board</text>
+    <text class="note" x="450" y="100">5,177 · APL keeps</text>
+    <text class="note" x="450" y="117">the top 10 % on</text>
+    <text class="note" x="650" y="100">96 MBONs</text>
+    <text class="note" x="650" y="117">approach − avoid</text>
+    <text class="note" x="840" y="100">the best-liked board</text>
+
+    <text class="learn-text" x="550" y="60">62,261 plastic synapses</text>
+  </g>
+
+  <!-- the loop: what happened next becomes dopamine at the KC -> MBON synapses -->
+  <path class="line" stroke-dasharray="3 4" d="M840 130 V182 H550 V84"/>
+  <path class="line" d="M545 90 l5 -6 l5 6"/>
+  <text class="note" x="700" y="174" text-anchor="middle">merges are sugar; getting stuck, nothing more</text>
+  <g text-anchor="end">
+    <text class="reward" x="538" y="142">PAM dopamine: better than expected</text>
+    <text class="punish" x="538" y="160">PPL1 dopamine: worse than expected</text>
+  </g>
+
+  <g class="note" font-size="11.5">
+    <circle class="ring" cx="636" cy="226" r="4"/>
+    <text x="645" y="230">hand-made</text>
+    <circle class="dot" cx="726" cy="226" r="4"/>
+    <text x="735" y="230">connectome</text>
+  </g>
+</svg>
