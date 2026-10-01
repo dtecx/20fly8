@@ -24,7 +24,10 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "data": "uv run scripts/build_data.py"
+    "data": "uv run scripts/build_data.py",
+    "train": "node scripts/train.ts",
+    "eval": "node scripts/eval.ts",
+    "capture": "node scripts/capture.ts"
   },
   "dependencies": {
     "three": "^0.186.1"

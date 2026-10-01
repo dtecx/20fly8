@@ -34,7 +34,7 @@ export const TILES: { fill: string; text: string }[] = [
   { fill: "#ead08a", text: "#3d3014" }, // 128
   { fill: "#e5c26a", text: "#3d3014" }, // 256
   { fill: "#dfb14c", text: "#3d3014" }, // 512
-  { fill: "#d59a2c", text: "#fffaf2" }, // 1024
+  { fill: "#cf7f22", text: "#fffaf2" }, // 1024
   { fill: "#1c1a17", text: "#f0cf72" }, // 2048: ink with a gold numeral
   { fill: "#3b2f6a", text: "#f3eee4" }, // 4096
   { fill: "#5a2346", text: "#f3eee4" },

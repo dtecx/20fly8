@@ -2,6 +2,7 @@
 //   npm run dev                                  (in another terminal)
 //   node scripts/capture.ts [--url http://localhost:2048/] [--wait 20] [--gif 8] [--gif-width 800] [--gif-fps 10]
 //                           [--width 1920 --height 1080] [--out docs/screenshot.png] [--eval "js run after loading"]
+//                           [--turbo 60]   (let the fly learn in turbo for 60 s first, then watch it at 1x)
 // Needs Google Chrome; the GIF needs ffmpeg. Writes docs/screenshot.png and docs/demo.gif.
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -90,6 +91,14 @@ async function main(): Promise<void> {
     await sleep(100);
   }
   if (evalJs) console.log("eval:", await evaluate(evalJs));
+  const turboS = Number(arg("turbo", "0"));
+  if (turboS > 0) {
+    console.log(`learning in turbo for ${turboS} s ...`);
+    await evaluate(`document.querySelector('[data-speed="3"]').click()`);
+    await sleep(turboS * 1000);
+    await evaluate(`document.querySelector('[data-speed="0"]').click()`);
+    console.log("games played:", await evaluate("window.__fly?.history.length"));
+  }
   console.log(`playing for ${waitS} s ...`);
   await sleep(waitS * 1000);
   const shot = await send("Page.captureScreenshot", { format: "png" });
