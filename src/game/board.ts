@@ -160,3 +160,35 @@ export function boardToString(board: Uint8Array): string {
   }
   return rows.join("\n");
 }
+
+export interface TileMove {
+  from: number;
+  to: number;
+  /** exponent before the move */
+  value: number;
+  /** this tile merged with another one at `to` */
+  merged: boolean;
+}
+
+/** Where every tile goes in a move (for animation). Tiles merge pairwise from the edge they slide towards. */
+export function traceSlide(board: Uint8Array, move: Move): TileMove[] {
+  const out: TileMove[] = [];
+  for (const line of LINES[move]) {
+    let dst = -1;
+    let open = -1; // index in `out` of the tile at `dst` that may still merge
+    for (let k = 0; k < 4; k++) {
+      const v = board[line[k]];
+      if (!v) continue;
+      if (open >= 0 && out[open].value === v) {
+        out[open].merged = true;
+        out.push({ from: line[k], to: line[dst], value: v, merged: true });
+        open = -1;
+      } else {
+        dst++;
+        out.push({ from: line[k], to: line[dst], value: v, merged: false });
+        open = out.length - 1;
+      }
+    }
+  }
+  return out;
+}

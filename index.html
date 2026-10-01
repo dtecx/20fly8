@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>20fly8 — a fruit-fly brain learns 2048</title>
+    <meta
+      name="description"
+      content="2048 played by the mushroom body of a fruit fly, the brain's learning centre, wired from the FlyWire v783 connectome. Dopamine teaches it, live in your browser."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23edc53f' stroke='%232a1c0f' stroke-width='4'/%3E%3Cellipse cx='28' cy='36' rx='12' ry='9' fill='%23d9a54c' stroke='%232a1c0f' stroke-width='3'/%3E%3Ccircle cx='41' cy='31' r='8' fill='%23d8322a' stroke='%232a1c0f' stroke-width='3'/%3E%3Cellipse cx='24' cy='24' rx='11' ry='5' fill='%23eaf6ff' stroke='%233f5c78' stroke-width='2' transform='rotate(-20 24 24)'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@400;600;700;800&family=Pangolin&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main id="app">
+      <section id="game-pane" aria-label="Game">
+        <canvas id="game"></canvas>
+        <button id="mute-btn" class="mute" type="button" aria-label="Toggle sound" aria-pressed="false">
+          <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+            <path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+          </svg>
+          <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z" />
+            <path class="wave" d="M16 9.5l5 5M21 9.5l-5 5" />
+          </svg>
+        </button>
+        <div id="sound-hint" hidden>click anywhere for sound</div>
+      </section>
+
+      <section id="right">
+        <div id="arcade-pane">
+          <canvas id="arcade" aria-label="3D fly at an arcade cabinet"></canvas>
+          <div class="tag">
+            <b>3D</b> the fly presses the arrow its mushroom body likes best
+            <span class="hint">drag to orbit</span>
+          </div>
+        </div>
+
+        <div id="stats">
+          <header>
+            <div class="title">
+              <b>MUSHROOM BODY</b>
+              <span id="dataset">—</span>
+            </div>
+            <div class="toggles">
+              <button id="speed-btn" title="Speed (F): watch every move, or let the fly play thousands of games">×1</button>
+              <button id="pause-btn" title="Pause (space)">❚❚ pause</button>
+              <button data-opt="noDopamine" title="Control: block the dopamine neurons, so no synapse can change (D)">no dopamine</button>
+              <button id="shuffle-btn" title="Control: rewire the nose, so every smell reaches different projection neurons (S)">shuffle smells</button>
+              <button id="reset-btn" title="Forget everything: all synapses back to their connectome strength">new fly</button>
+            </div>
+          </header>
+
+          <div class="grid">
+            <div class="card mb">
+              <canvas id="mbmap"></canvas>
+              <div class="card-title">mushroom body · live</div>
+            </div>
+
+            <div class="card smells">
+              <div class="card-title">
+                four smells → one move
+                <span id="choice-value">—</span>
+              </div>
+              <div id="smells"></div>
+            </div>
+
+            <div class="card raster">
+              <div class="card-title">Kenyon cells per move <span id="kc-sparse">—</span></div>
+              <canvas id="raster"></canvas>
+            </div>
+
+            <div class="card traces">
+              <canvas id="traces"></canvas>
+            </div>
+
+            <div class="card nums">
+              <div class="num"><span>games played</span><b id="n-games">0</b></div>
+              <div class="num"><span>moves made</span><b id="n-moves">0</b></div>
+              <div class="num"><span>mean score · last 100</span><b id="n-mean">—</b></div>
+              <div class="num"><span>best tile ever</span><b id="n-best">—</b></div>
+              <div class="num"><span>synapses changed</span><b id="n-plastic">0</b></div>
+              <div class="num"><span>moves / s</span><b id="n-speed">—</b></div>
+              <div class="num wide"><span>reached in the last 100 games</span><b id="n-reach">—</b></div>
+            </div>
+
+            <div class="card brain">
+              <canvas id="brainmap"></canvas>
+              <div class="card-title">whole brain · mushroom body lit</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="loader">
+      <div class="box">
+        <div class="l-title">Waking up a fly</div>
+        <div class="l-sub">FlyWire v783 · 5,177 Kenyon cells · 62,261 plastic synapses · ~2.5 MB</div>
+        <div class="l-track"><div id="loader-bar"></div></div>
+        <div id="loader-stage">…</div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
